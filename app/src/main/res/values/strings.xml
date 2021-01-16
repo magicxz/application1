@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">application1</string>
+
+    //layout textview
+    <string name="name">Name :</string>
+    <string name="contact_number">Contact Number :</string>
+
+    //layout button
+    <string name="add_button">Add</string>
+    <string name="addContact_button">Add Contact</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
+
+    //toast message
+    <string name="delSuccessMsg">Delete Successfully!</string>
+    <string name="addSuccessMsg">Added Successfully!</string>
+    <string name="editSuccessMsg">Edited Successfully!</string>
+
+    //validation add name message
+    <string name="validNameShort">Name cannot less than 3 character</string>
+    <string name="validNameLong">Name cannot more than 50 character</string>
+    <string name="validEmpty">Field cannot be empty</string>
+
+</resources>
