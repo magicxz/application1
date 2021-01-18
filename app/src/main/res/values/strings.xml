@@ -17,9 +17,14 @@
     <string name="addSuccessMsg">Added Successfully!</string>
     <string name="editSuccessMsg">Edited Successfully!</string>
 
-    //validation add name message
-    <string name="validNameShort">Name cannot less than 3 character</string>
-    <string name="validNameLong">Name cannot more than 50 character</string>
+    //validation add contact message
+    <string name="validNameShort">Name cannot be less than 3 character</string>
+    <string name="validNameLong">Name cannot be more than 50 character</string>
     <string name="validEmpty">Field cannot be empty</string>
 
+    //alert dialog
+    <string name="delAlertTitle">Delete Contact</string>
+    <string name="delAlertMsg">Are you sure want to delete this contact?</string>
+    <string name="alertYes">Yes</string>
+    <string name="alertNo">No</string>
 </resources>

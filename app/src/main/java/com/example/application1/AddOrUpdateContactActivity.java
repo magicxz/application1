@@ -22,8 +22,7 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
     Button saveBtn;
     TextInputLayout textNameLayout;
     TextInputLayout textPhoneLayout;
-    boolean valid = false;
-    String errorMsg;
+    boolean autoCheck = false;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,17 +45,17 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
         name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                validateName();
+                if (autoCheck){
+                    validateName();
+                }
             }
         });
 
@@ -73,7 +72,9 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                validatePhone();
+                if (autoCheck){
+                    validatePhone();
+                }
             }
         });
 
@@ -86,11 +87,9 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
             saveBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(validateName() && validatePhone()){
-                        valid = true;
-                    }
+                    autoCheck = true;
 
-                    if(valid == true){
+                    if(checkValidate()){
                         editContact(contact.getContactId(),name.getText().toString(),phone.getText().toString());
                     }
                 }
@@ -101,11 +100,9 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
             saveBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(validateName() && validatePhone()){
-                        valid = true;
-                    }
+                    autoCheck = true;
 
-                    if(valid == true){
+                    if(checkValidate()) {
                         addContact(name.getText().toString(),phone.getText().toString());
                     }
                 }
@@ -113,39 +110,41 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
         }
     }
 
+    private boolean checkValidate(){
+        boolean valid = false;
+
+        validateName();
+        validatePhone();
+
+        return valid;
+    }
+
     private boolean validateName(){
 
         if(name.getText().toString().isEmpty()){
-            errorMsg = name.getResources().getString(R.string.validEmpty);
-            textNameLayout.setError(errorMsg);
+            textNameLayout.setError(getString(R.string.validEmpty));
             return false;
-        }
-
-        if (name.length() > 50){
-            errorMsg = name.getResources().getString(R.string.validNameLong);
-            textNameLayout.setError(errorMsg);
+        }else if (name.length() > 50){
+            textNameLayout.setError(getString(R.string.validNameLong));
             return false;
-        }
-
-        if(name.length() < 3){
-            errorMsg = name.getResources().getString(R.string.validNameShort);
-            textNameLayout.setError(errorMsg);
+        }else if(name.length() < 3){
+            textNameLayout.setError(getString(R.string.validNameShort));
             return false;
         } else{
             textNameLayout.setError(null);
-            return true;
         }
+        return true;
     }
 
     private boolean validatePhone(){
+
         if(phone.getText().toString().isEmpty()){
-            errorMsg = name.getResources().getString(R.string.validEmpty);
-            textPhoneLayout.setError(errorMsg);
+            textPhoneLayout.setError(getString(R.string.validEmpty));
             return false;
         }else{
             textPhoneLayout.setError(null);
-            return true;
         }
+        return true;
     }
 
     private void addContact(String addName, String addPhone){

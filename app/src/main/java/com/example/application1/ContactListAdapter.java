@@ -14,14 +14,14 @@ import java.util.List;
 public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.ViewHolder> {
 
     private OnItemClickListener iListener;
-    private ArrayList<Contact> MyContactList;
+    private ArrayList<Contact> myContactList;
 
     public void setContactList(List<Contact> contactList){
-        this.MyContactList.clear();
-        for(int i = 0; i < contactList.size(); i++){
-            this.MyContactList.add(contactList.get(i));
-        }
-        //this.MyContactList = new ArrayList<>(contactList);
+        this.myContactList = new ArrayList<>(contactList);
+    }
+
+    public Contact getContact(int position){
+        return myContactList.get(position);
     }
 
     public interface OnItemClickListener{
@@ -58,10 +58,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         }
     }
 
-    //private ArrayList<Contact> contactList;
-
     public ContactListAdapter(ArrayList<Contact> contacts){
-        MyContactList = contacts;
+        myContactList = contacts;
     }
 
     @Override
@@ -77,7 +75,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
     @Override
     public void onBindViewHolder(final ContactListAdapter.ViewHolder holder, int position) {
-        Contact contact = MyContactList.get(position);
+        Contact contact = myContactList.get(position);
         TextView viewContact = holder.name;
         TextView viewPhone = holder.phone;
 
@@ -87,6 +85,6 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
     @Override
     public int getItemCount() {
-        return this.MyContactList.size();
+        return this.myContactList.size();
     }
 }

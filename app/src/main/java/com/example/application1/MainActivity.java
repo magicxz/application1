@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,8 +26,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final ArrayList<Contact> contactList = new ArrayList<>();
-
-        contactList.clear();
 
         Button addContactBtn = findViewById(R.id.addContactBtn);
         addContactBtn.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(int position) {
                 Intent intent = new Intent(MainActivity.this, DeleteOrViewContactDetailsActivity.class);
-                intent.putExtra(Constant.GET_CONTACT, contactList.get(position));
+                intent.putExtra(Constant.GET_CONTACT, contactListAdapter.getContact(position));
                 MainActivity.this.startActivity(intent);
             }
         });
@@ -59,10 +60,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == 100){
+        if(requestCode == 100 || requestCode == 300){
             loadContactList();
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 }
