@@ -7,4 +7,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CustomTheme">
+        <item name="android:itemBackground">@drawable/button</item>
+        <item name="android:actionMenuTextColor">@color/black</item>
+    </style>
+
 </resources>

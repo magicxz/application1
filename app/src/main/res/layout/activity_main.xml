@@ -6,29 +6,41 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <include layout="@layout/action_bar"
-        android:id="@+id/actionbar"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/r1">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tool"
+            android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            app:menu="@menu/topbar">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contacts"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:layout_gravity="center"/>
+        </androidx.appcompat.widget.Toolbar>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/actionbar"
-        android:background="@color/light_grey">
+        android:layout_below="@+id/r1"
+        android:background="@color/light_grey"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/addContactBtn"
-        android:text="@string/addContact_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:textAllCaps="false"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/reContact"
-        android:layout_below="@+id/addContactBtn"
-        android:layout_marginTop="20dp"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/reContact" />
     </RelativeLayout>
 </RelativeLayout>
