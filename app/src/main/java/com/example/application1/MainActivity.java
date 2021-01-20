@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         contactListAdapter.setOnItemClickListener(new ContactListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                String btnName = String.valueOf(R.string.save);
+                String btnName = Constant.SAVE;
                 Bundle data = new Bundle();
                 Intent intent = new Intent(MainActivity.this, AddOrUpdateContactActivity.class);
                 data.putString(Constant.BTN_NAME,btnName);

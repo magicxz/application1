@@ -7,4 +7,5 @@ public class Constant {
     public static final String GET_CONTACT = "Contact";
     public static final String ADD = "ADD";
     public static final String SAVE = "SAVE";
+    public static final String EDIT = "EDIT";
 }

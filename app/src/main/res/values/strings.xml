@@ -6,6 +6,7 @@
     <string name="contact_number">Contact Number :</string>
     <string name="contacts">Contacts</string>
     <string name="contact">Contact</string>
+    <string name="add_img">Profile</string>
 
     //layout button
     <string name="add_button">Add</string>
@@ -13,6 +14,8 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="save">SAVE</string>
+    <string name="selfie">Take a picture</string>
+    <string name="choose_img">Choose a picture</string>
 
     //toast message
     <string name="delSuccessMsg">Delete Successfully!</string>

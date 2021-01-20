@@ -50,6 +50,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         public TextView phone;
         public RelativeLayout rela;
         public ImageView deleteContact;
+        public TextView datetime;
 
         public ViewHolder(View  itemView, final OnItemClickListener listener){
             super(itemView);
@@ -58,6 +59,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
             phone = (TextView) itemView.findViewById(R.id.contactNum);
             rela = (RelativeLayout) itemView.findViewById(R.id.re1);
             deleteContact = itemView.findViewById(R.id.deleteBtn);
+            datetime = itemView.findViewById(R.id.datetime);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -91,11 +93,12 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
     @Override
     public void onBindViewHolder(final ContactListAdapter.ViewHolder holder, int position) {
         final Contact contact = myContactList.get(position);
-        TextView viewContact = holder.name;
-        TextView viewPhone = holder.phone;
+        //TextView viewContact = holder.name;
+        //TextView viewPhone = holder.phone;
 
-        viewContact.setText(contact.getName());
-        viewPhone.setText(contact.getPhone());
+        holder.name.setText(contact.getName());
+        holder.phone.setText(contact.getPhone());
+        holder.datetime.setText(contact.getDatetime());
 
         holder.deleteContact.setOnClickListener(new View.OnClickListener() {
             @Override

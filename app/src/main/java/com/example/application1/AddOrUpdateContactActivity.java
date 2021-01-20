@@ -1,28 +1,41 @@
 package com.example.application1;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ActionMenuView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AddOrUpdateContactActivity extends AppCompatActivity {
 
@@ -32,17 +45,26 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
     TextView contactName;
     TextInputLayout textNameLayout;
     TextInputLayout textPhoneLayout;
-    Button edit;
     boolean autoCheck = false;
-    Menu menu;
     ActionMenuItemView item;
     Toolbar toolbar;
+    Button custom_button;
+    TextView datetime;
+    CircleImageView add_img;
+    Uri imageUri;
+    Menu menu;
+    MenuItem menuitem;
+    Button take_picture;
+    Button choose_img;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addorupdatecontact);
 
         toolbar = findViewById(R.id.tool_addorupdate);
+
+        menu = toolbar.getMenu();
+        menuitem = menu.findItem(R.id.save);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +77,7 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
         phone = findViewById(R.id.add_phone);
         textNameLayout = findViewById(R.id.name);
         textPhoneLayout = findViewById(R.id.contact_number);
-        edit = findViewById(R.id.edit);
+        add_img = findViewById(R.id.add_image);
 
         Bundle data = getIntent().getExtras();
         String btnName = null;
@@ -102,68 +124,78 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
         });
 
         if(btnName != null){
-            item = toolbar.findViewById(R.id.save);
-            item.setTitle(Constant.SAVE);
+            menuitem = menu.findItem(R.id.save);
+            menuitem.setTitle(Constant.SAVE);
 
             name.setText(contact.getName());
             phone.setText(contact.getPhone());
 
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            menuitem = menu.findItem(R.id.save).setTitle(Constant.ADD);
+            menuitem.getActionView().setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onMenuItemClick(MenuItem item) {
-
-                    int id = item.getItemId();
-
-                    if (id == R.id.save){
-                        autoCheck = true;
-                        if(checkValidate()){
-                            editContact(contact.getContactId(),name.getText().toString(),phone.getText().toString());
-                        }
-                        return false;
+                public void onClick(View v) {
+                    autoCheck = true;
+                    if (checkValidate()) {
+                        editContact(contact.getContactId(),name.getText().toString(),phone.getText().toString());
                     }
-                    return false;
                 }
             });
         }else{
-            item = toolbar.findViewById(R.id.save);
-            item.setTitle(Constant.ADD);
-
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            menuitem = menu.findItem(R.id.save).setTitle(Constant.ADD);
+            menuitem.getActionView().setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    int id = item.getItemId();
-
-                    if (id == R.id.save) {
-                        autoCheck = true;
-                        if (checkValidate()) {
-                            addContact(name.getText().toString(), phone.getText().toString());
-                        }
-                        return false;
+                public void onClick(View v) {
+                    autoCheck = true;
+                    if (checkValidate()) {
+                        addContact(name.getText().toString(), phone.getText().toString());
                     }
-                    return false;
                 }
             });
         }
 
-        viewContactDetails();
-
-        edit.setOnClickListener(new View.OnClickListener() {
+        add_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                edit.setVisibility(View.GONE);
-                item = toolbar.findViewById(R.id.save);
-                item.setVisibility(View.VISIBLE);
-                name.setEnabled(true);
-                phone.setEnabled(true);
+                loadBottomSheetDialog();
             }
         });
+
+        viewContactDetails();
+    }
+
+    private void loadBottomSheetDialog(){
+        RelativeLayout mainLayout = findViewById(R.id.relative_addorupdate);
+        LayoutInflater layout = getLayoutInflater();
+        View myLayout = layout.inflate(R.layout.bottom_sheet_dialog,mainLayout,false);
+        final BottomSheetDialog dialog = new BottomSheetDialog(this);
+
+        dialog.setContentView(myLayout);
+        dialog.show();
+
+        choose_img = myLayout.findViewById(R.id.choose_picture);
+        take_picture = myLayout.findViewById(R.id.take_picture);
+
+        choose_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadImagesFromGallery();
+                dialog.dismiss();
+            }
+        });
+
+
     }
 
     private boolean checkValidate(){
         boolean valid = true;
 
-        if(!validateName()) valid = false;
-        if(!validatePhone()) valid = false;
+        if(!validateName()) {
+            valid = false;
+        }
+
+        if(!validatePhone()) {
+            valid = false;
+        }
 
         return valid;
     }
@@ -197,26 +229,45 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
     }
 
     private void viewContactDetails(){
-        item = toolbar.findViewById(R.id.save);
-        item.setVisibility(View.GONE);
-        name.setEnabled(false);
-        phone.setEnabled(false);
-
         contact = new Contact();
+        name = findViewById(R.id.add_name);
+        phone = findViewById(R.id.add_phone);
+        contactName = findViewById(R.id.contactName);
+        datetime = findViewById(R.id.view_date_time);
 
         Bundle data = getIntent().getExtras();
 
         if(data != null){
             contact = data.getParcelable(Constant.GET_CONTACT);
 
-            name = findViewById(R.id.add_name);
-            phone = findViewById(R.id.add_phone);
-            contactName = findViewById(R.id.contactName);
-
             name.setText(contact.getName());
             phone.setText(contact.getPhone());
             contactName.setText(contact.getName());
+            datetime.setText(contact.getDatetime());
         }
+    }
+
+    private void loadImagesFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setType("image/*");
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode == 1 && data.getData() != null){
+            imageUri = data.getData();
+
+            try {
+                InputStream is = getContentResolver().openInputStream(imageUri);
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                add_img.setImageBitmap(bitmap);
+            }catch (FileNotFoundException e){
+                e.printStackTrace();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void addContact(String addName, String addPhone){
@@ -225,6 +276,7 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
         contact = new Contact();
         contact.zName = addName;
         contact.zPhone = addPhone;
+        contact.datetime = getTime();
 
         db.daoAccess().insertContact(contact);
 
@@ -238,6 +290,7 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
         contact.contactId = id;
         contact.zName = editName;
         contact.zPhone = editPhone;
+        contact.datetime = getTime();
 
         db.daoAccess().insertContact(contact);
 

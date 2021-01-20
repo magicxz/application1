@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/choose_picture"
+        android:text="@string/choose_img"
+        android:drawableStart="@drawable/ic_baseline_add_photo"
+        android:background="@drawable/button"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:paddingStart="70dp"
+        android:paddingEnd="60dp"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/take_picture"
+        android:text="@string/selfie"
+        android:drawableStart="@drawable/ic_baseline_add_a_photo"
+        android:layout_below="@+id/choose_picture"
+        android:background="@drawable/button"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:paddingStart="70dp"
+        android:paddingEnd="60dp"
+        android:layout_marginTop="20dp"/>
+
+</RelativeLayout>

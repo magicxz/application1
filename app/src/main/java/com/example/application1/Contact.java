@@ -28,6 +28,9 @@ public class Contact implements Parcelable {
     @ColumnInfo(name = "phone")
     public String zPhone;
 
+    @ColumnInfo(name = "datetime")
+    public String datetime;
+
     public Contact() {
 
     }
@@ -44,6 +47,10 @@ public class Contact implements Parcelable {
         return zPhone;
     }
 
+    public String getDatetime() {
+        return datetime;
+    }
+
     public void setName(String name) {
         this.zName = name;
     }
@@ -56,6 +63,7 @@ public class Contact implements Parcelable {
         contactId = in.readInt();
         zName = in.readString();
         zPhone = in.readString();
+        datetime = in.readString();
     }
 
     public static final Creator<Contact> CREATOR = new Creator<Contact>() {
@@ -80,5 +88,6 @@ public class Contact implements Parcelable {
         dest.writeInt(contactId);
         dest.writeString(zName);
         dest.writeString(zPhone);
+        dest.writeString(datetime);
     }
 }
