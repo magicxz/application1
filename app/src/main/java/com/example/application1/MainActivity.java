@@ -30,14 +30,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar tool = findViewById(R.id.tool);
+        Toolbar tool = findViewById(R.id.tool_main);
         tool.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
 
                 if (id == R.id.addContactBtn){
-                    startActivityForResult(new Intent(MainActivity.this, AddOrUpdateContactActivity.class),100);
+                    Intent intent = new Intent(MainActivity.this, AddOrUpdateContactActivity.class);
+                    startActivityForResult(intent,100);
                     return true;
                 }
                 return false;
@@ -57,8 +58,12 @@ public class MainActivity extends AppCompatActivity {
         contactListAdapter.setOnItemClickListener(new ContactListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
+                String btnName = String.valueOf(R.string.save);
+                Bundle data = new Bundle();
                 Intent intent = new Intent(MainActivity.this, AddOrUpdateContactActivity.class);
-                intent.putExtra(Constant.GET_CONTACT, contactListAdapter.getContact(position));
+                data.putString(Constant.BTN_NAME,btnName);
+                data.putParcelable(Constant.GET_CONTACT, contactListAdapter.getContact(position));
+                intent.putExtras(data);
                 MainActivity.this.startActivity(intent);
             }
         });

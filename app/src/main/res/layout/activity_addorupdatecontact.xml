@@ -8,7 +8,7 @@
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/toolbar2"
+        android:id="@+id/tool_addorupdate"
         app:navigationIcon="@drawable/ic_baseline_arrow_back"
         app:menu="@menu/topsave">
 
@@ -26,7 +26,7 @@
         android:layout_height="0.7dp"
         android:id="@+id/imgLine"
         android:background="@color/black"
-        android:layout_below="@+id/toolbar2"/>
+        android:layout_below="@+id/tool_addorupdate"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -133,11 +133,9 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/addBtn"
-                    android:text="@string/add_button"
-                    android:textAllCaps="false"
-                    android:layout_marginTop="20dp"
-                    android:visibility="gone"/>
+                    android:id="@+id/edit"
+                    android:text="@string/edit"
+                    android:layout_marginTop="20dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </RelativeLayout>

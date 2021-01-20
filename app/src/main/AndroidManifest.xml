@@ -10,8 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".DeleteOrViewContactDetailsActivity"
-            android:parentActivityName=".MainActivity"/>
+            android:name=".DeleteOrViewContactDetailsActivity"/>
         <activity
             android:name=".AddOrUpdateContactActivity"/>
         <activity android:name=".MainActivity">

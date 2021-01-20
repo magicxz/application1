@@ -7,14 +7,17 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ActionMenuView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.LocalDateTime;
@@ -24,19 +27,22 @@ import java.time.format.DateTimeFormatter;
 public class AddOrUpdateContactActivity extends AppCompatActivity {
 
     Contact contact;
-    EditText name;
-    EditText phone;
+    TextInputEditText name;
+    TextInputEditText phone;
     TextView contactName;
-    Button saveBtn;
     TextInputLayout textNameLayout;
     TextInputLayout textPhoneLayout;
+    Button edit;
     boolean autoCheck = false;
+    Menu menu;
+    ActionMenuItemView item;
+    Toolbar toolbar;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addorupdatecontact);
 
-        Toolbar toolbar = findViewById(R.id.toolbar2);
+        toolbar = findViewById(R.id.tool_addorupdate);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,16 +53,15 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
 
         name = findViewById(R.id.add_name);
         phone = findViewById(R.id.add_phone);
-        saveBtn = findViewById(R.id.addBtn);
         textNameLayout = findViewById(R.id.name);
         textPhoneLayout = findViewById(R.id.contact_number);
-        TextView txt = findViewById(R.id.save);
+        edit = findViewById(R.id.edit);
 
         Bundle data = getIntent().getExtras();
         String btnName = null;
 
         if(data != null) {
-            contact = (Contact) data.getParcelable(Constant.EDIT_CONTACT);
+            contact = (Contact) data.getParcelable(Constant.GET_CONTACT);
             btnName = data.getString(Constant.BTN_NAME);
         }
 
@@ -97,62 +102,68 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
         });
 
         if(btnName != null){
-            saveBtn.setText(R.string.save);
+            item = toolbar.findViewById(R.id.save);
+            item.setTitle(Constant.SAVE);
 
             name.setText(contact.getName());
             phone.setText(contact.getPhone());
 
-            txt.setOnClickListener(new View.OnClickListener() {
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
-                public void onClick(View v) {
-                    autoCheck = true;
+                public boolean onMenuItemClick(MenuItem item) {
 
-                    if(checkValidate()){
-                        editContact(contact.getContactId(),name.getText().toString(),phone.getText().toString());
+                    int id = item.getItemId();
+
+                    if (id == R.id.save){
+                        autoCheck = true;
+                        if(checkValidate()){
+                            editContact(contact.getContactId(),name.getText().toString(),phone.getText().toString());
+                        }
+                        return false;
                     }
+                    return false;
                 }
             });
         }else{
-            saveBtn.setText(R.string.add_button);
+            item = toolbar.findViewById(R.id.save);
+            item.setTitle(Constant.ADD);
 
-            saveBtn.setOnClickListener(new View.OnClickListener() {
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
-                public void onClick(View v) {
-                    autoCheck = true;
+                public boolean onMenuItemClick(MenuItem item) {
+                    int id = item.getItemId();
 
-                    if(checkValidate()) {
-                        addContact(name.getText().toString(),phone.getText().toString());
+                    if (id == R.id.save) {
+                        autoCheck = true;
+                        if (checkValidate()) {
+                            addContact(name.getText().toString(), phone.getText().toString());
+                        }
+                        return false;
                     }
+                    return false;
                 }
             });
         }
 
         viewContactDetails();
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.topsave,menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem){
-        int id = menuItem.getItemId();
-
-        if (id == R.id.save){
-            Toast.makeText(this, "hi",Toast.LENGTH_LONG).show();
-            //startActivityForResult(new Intent(this, AddOrUpdateContactActivity.class),100);
-            return true;
-        }
-        return super.onOptionsItemSelected(menuItem);
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edit.setVisibility(View.GONE);
+                item = toolbar.findViewById(R.id.save);
+                item.setVisibility(View.VISIBLE);
+                name.setEnabled(true);
+                phone.setEnabled(true);
+            }
+        });
     }
 
     private boolean checkValidate(){
-        boolean valid = false;
+        boolean valid = true;
 
-        validateName();
-        validatePhone();
+        if(!validateName()) valid = false;
+        if(!validatePhone()) valid = false;
 
         return valid;
     }
@@ -186,30 +197,36 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
     }
 
     private void viewContactDetails(){
+        item = toolbar.findViewById(R.id.save);
+        item.setVisibility(View.GONE);
+        name.setEnabled(false);
+        phone.setEnabled(false);
+
         contact = new Contact();
 
         Bundle data = getIntent().getExtras();
-        contact = data.getParcelable(Constant.GET_CONTACT);
 
-        name = findViewById(R.id.add_name);
-        phone = findViewById(R.id.add_phone);
-        contactName = findViewById(R.id.contactName);
+        if(data != null){
+            contact = data.getParcelable(Constant.GET_CONTACT);
 
-        name.setText(contact.getName());
-        phone.setText(contact.getPhone());
-        contactName.setText(contact.getName());
+            name = findViewById(R.id.add_name);
+            phone = findViewById(R.id.add_phone);
+            contactName = findViewById(R.id.contactName);
+
+            name.setText(contact.getName());
+            phone.setText(contact.getPhone());
+            contactName.setText(contact.getName());
+        }
     }
 
     private void addContact(String addName, String addPhone){
         MyDatabase db = MyDatabase.getDBInstance(this.getApplicationContext());
 
-        if(addName != null && addPhone != null){
-            contact = new Contact();
-            contact.zName = addName;
-            contact.zPhone = addPhone;
+        contact = new Contact();
+        contact.zName = addName;
+        contact.zPhone = addPhone;
 
-            db.daoAccess().insertContact(contact);
-        }
+        db.daoAccess().insertContact(contact);
 
         Toast.makeText(this, R.string.addSuccessMsg, Toast.LENGTH_SHORT).show();
         this.finish();

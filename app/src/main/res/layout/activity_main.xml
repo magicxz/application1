@@ -14,7 +14,7 @@
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tool"
+            android:id="@+id/tool_main"
             android:layout_gravity="center"
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
