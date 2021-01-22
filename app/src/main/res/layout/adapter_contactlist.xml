@@ -16,7 +16,7 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:id="@+id/image"
+            android:id="@+id/profile"
             android:src="@drawable/profile"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
@@ -26,7 +26,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/image"
+            android:layout_toEndOf="@+id/profile"
             android:layout_centerVertical="true"
             android:layout_toStartOf="@+id/deleteBtn"
             android:layout_marginEnd="10dp"

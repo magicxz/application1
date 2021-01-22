@@ -31,6 +31,9 @@ public class Contact implements Parcelable {
     @ColumnInfo(name = "datetime")
     public String datetime;
 
+    @ColumnInfo(name = "image")
+    public String image;
+
     public Contact() {
 
     }
@@ -51,6 +54,10 @@ public class Contact implements Parcelable {
         return datetime;
     }
 
+    public String getImage() {
+        return image;
+    }
+
     public void setName(String name) {
         this.zName = name;
     }
@@ -59,11 +66,16 @@ public class Contact implements Parcelable {
         this.zPhone = phone;
     }
 
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     protected Contact(Parcel in) {
         contactId = in.readInt();
         zName = in.readString();
         zPhone = in.readString();
         datetime = in.readString();
+        image = in.readString();
     }
 
     public static final Creator<Contact> CREATOR = new Creator<Contact>() {
@@ -89,5 +101,6 @@ public class Contact implements Parcelable {
         dest.writeString(zName);
         dest.writeString(zPhone);
         dest.writeString(datetime);
+        dest.writeString(image);
     }
 }

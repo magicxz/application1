@@ -22,17 +22,10 @@
             android:layout_gravity="center"/>
     </androidx.appcompat.widget.Toolbar>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="0.7dp"
-        android:id="@+id/imgLine"
-        android:background="@color/black"
-        android:layout_below="@+id/tool_addorupdate"/>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/imgLine"
+        android:layout_below="@+id/tool_addorupdate"
         android:padding="15dp"
         android:background="@color/light_grey">
 

@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +18,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.ViewHolder> {
 
@@ -38,7 +46,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
     }
 
     public interface OnItemClickListener{
-        void onItemClick(int position);
+        void onItemClick(Contact contact, int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -51,6 +59,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         public RelativeLayout rela;
         public ImageView deleteContact;
         public TextView datetime;
+        public CircleImageView profile;
 
         public ViewHolder(View  itemView, final OnItemClickListener listener){
             super(itemView);
@@ -60,6 +69,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
             rela = (RelativeLayout) itemView.findViewById(R.id.re1);
             deleteContact = itemView.findViewById(R.id.deleteBtn);
             datetime = itemView.findViewById(R.id.datetime);
+            profile = itemView.findViewById(R.id.profile);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -67,7 +77,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
                     if(listener != null){
                         int position = getAdapterPosition();
                         if(position != RecyclerView.NO_POSITION){
-                            listener.onItemClick(position);
+                            listener.onItemClick(getContact(position),position);
                         }
                     }
                 }
@@ -93,12 +103,17 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
     @Override
     public void onBindViewHolder(final ContactListAdapter.ViewHolder holder, int position) {
         final Contact contact = myContactList.get(position);
-        //TextView viewContact = holder.name;
-        //TextView viewPhone = holder.phone;
 
         holder.name.setText(contact.getName());
         holder.phone.setText(contact.getPhone());
         holder.datetime.setText(contact.getDatetime());
+
+        if (BitmapFactory.decodeFile(contact.getImage()) != null){
+            holder.profile.setImageBitmap(BitmapFactory.decodeFile(contact.getImage()));
+        }else{
+            //holder.profile.setImageDrawable(R.drawable.profile);
+            Picasso.get().load(contact.getImage()).placeholder(R.drawable.profile).into(holder.profile);
+        }
 
         holder.deleteContact.setOnClickListener(new View.OnClickListener() {
             @Override
