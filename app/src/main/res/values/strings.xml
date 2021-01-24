@@ -8,7 +8,8 @@
     <string name="contact">Contact</string>
     <string name="add_img">Profile</string>
     <string name="wrong">Your access is denied!</string>
-    <string name="ok">OK</string>
+    <string name="close">CLOSE</string>
+    <string name="setting">GO TO SETTING</string>
 
     //layout button
     <string name="add_button">Add</string>

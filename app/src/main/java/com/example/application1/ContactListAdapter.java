@@ -111,7 +111,6 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         if (BitmapFactory.decodeFile(contact.getImage()) != null){
             holder.profile.setImageBitmap(BitmapFactory.decodeFile(contact.getImage()));
         }else{
-            //holder.profile.setImageDrawable(R.drawable.profile);
             Picasso.get().load(contact.getImage()).placeholder(R.drawable.profile).into(holder.profile);
         }
 

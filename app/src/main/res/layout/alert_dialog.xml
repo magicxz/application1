@@ -3,8 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:gravity="center"
-    android:padding="10dp">
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:gravity="center">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -12,7 +13,6 @@
         app:cardCornerRadius="15dp"
         app:cardBackgroundColor="@color/white"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
         <RelativeLayout
@@ -30,26 +30,42 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/txt1"
+                android:id="@+id/txt_msg"
                 android:text="@string/wrong"
                 android:textColor="@color/black"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/correct"
-                android:textSize="25dp"/>
+                android:textSize="25sp"/>
 
-            <Button
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:id="@+id/ok"
-                android:text="@string/ok"
-                android:textColor="@color/black"
-                android:layout_below="@+id/txt1"
+                android:layout_height="wrap_content"
+                android:id="@+id/setting"
+                android:text="@string/setting"
+                android:textColor="@color/white"
+                android:layout_below="@+id/txt_msg"
                 android:layout_centerHorizontal="true"
+                android:gravity="center"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/button"
-                android:layout_marginBottom="10dp"/>
+                android:background="@drawable/button_black"
+                android:layout_marginBottom="10dp"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="50dp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/close"
+                android:text="@string/close"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:layout_below="@+id/setting"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button"
+                android:layout_marginBottom="10dp"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="50dp"/>
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
-
 </RelativeLayout>

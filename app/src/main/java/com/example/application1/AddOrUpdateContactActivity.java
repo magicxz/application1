@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -47,6 +48,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -82,7 +84,8 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
     BottomSheetDialog dialog;
     Bitmap photo;
     Dialog layout_dialog;
-    Button ok;
+    TextView setting;
+    TextView close;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -241,7 +244,11 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
             phone.setText(contact.getPhone());
             contactName.setText(contact.getName());
             datetime.setText(contact.getDatetime());
-            add_img.setImageBitmap(BitmapFactory.decodeFile(contact.getImage()));
+            if (BitmapFactory.decodeFile(contact.getImage()) != null){
+                add_img.setImageBitmap(BitmapFactory.decodeFile(contact.getImage()));
+            }else{
+                Picasso.get().load(contact.getImage()).placeholder(R.drawable.profile).into(add_img);
+            }
         }
     }
 
@@ -257,28 +264,13 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
         choose_img = myLayout.findViewById(R.id.choose_picture);
         take_picture = myLayout.findViewById(R.id.take_picture);
 
-
-        layout_dialog = new Dialog(AddOrUpdateContactActivity.this);
-        layout_dialog.setContentView(R.layout.alert_dialog);
-        ok = layout_dialog.findViewById(R.id.ok);
-
         choose_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
                         if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)){
-
-                            layout_dialog.setCancelable(true);
-                            layout_dialog.getWindow();
-                            layout_dialog.show();
-
-                            ok.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    layout_dialog.dismiss();
-                                }
-                            });
+                            showAlertDialog();
                         }else{
                             String[] permission = {Manifest.permission.READ_EXTERNAL_STORAGE};
                             requestPermissions(permission,PERMISSION_GALLERY_CODE);
@@ -297,16 +289,7 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
                         if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)){
-                            layout_dialog.setCancelable(true);
-                            layout_dialog.getWindow();
-                            layout_dialog.show();
-
-                            ok.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    layout_dialog.dismiss();
-                                }
-                            });
+                            showAlertDialog();
                         }else{
                             String[] permission = {Manifest.permission.CAMERA};
                             requestPermissions(permission,PERMISSION_CAMERA_CODE);
@@ -320,25 +303,57 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
         });
     }
 
+    private void showAlertDialog(){
+        layout_dialog = new Dialog(AddOrUpdateContactActivity.this);
+        layout_dialog.setContentView(R.layout.alert_dialog);
+
+        close = layout_dialog.findViewById(R.id.close);
+        setting = layout_dialog.findViewById(R.id.setting);
+
+        layout_dialog.setCancelable(true);
+        layout_dialog.getWindow();
+        layout_dialog.show();
+
+        setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts(Constant.PACKAGE,getPackageName(),null);
+                intent.setData(uri);
+                startActivity(intent);
+                layout_dialog.dismiss();
+            }
+        });
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layout_dialog.dismiss();
+            }
+        });
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        for (int i = 0; i < grantResults.length; i++){
-            if (requestCode == PERMISSION_GALLERY_CODE) {
+        if (requestCode == PERMISSION_GALLERY_CODE){
+            for (int i = 0; i < grantResults.length; i++){
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     loadImagesFromGallery();
-                    dialog.dismiss();
-                }else{
-                    Toast.makeText(this, R.string.permission_result, Toast.LENGTH_SHORT).show();
-                }
-            }else if (requestCode == PERMISSION_CAMERA_CODE){
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    loadCamera();
-                    dialog.dismiss();
                 }else{
                     Toast.makeText(this, R.string.permission_result, Toast.LENGTH_SHORT).show();
                 }
             }
+            dialog.dismiss();
+        }else if(requestCode == PERMISSION_CAMERA_CODE){
+            for (int i = 0; i < grantResults.length; i++){
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    loadCamera();
+                }else{
+                    Toast.makeText(this, R.string.permission_result, Toast.LENGTH_SHORT).show();
+                }
+            }
+            dialog.dismiss();
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
@@ -359,66 +374,49 @@ public class AddOrUpdateContactActivity extends AppCompatActivity {
 
         if(requestCode == 1 && resultCode == Activity.RESULT_OK){
             imageUri = data.getData();
-
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),imageUri);
-                ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
-                File directory = contextWrapper.getDir(Constant.PHOTO_DIR, Context.MODE_PRIVATE);
-                File file = new File(directory, System.currentTimeMillis() + ".jpg");
-
-                if (!file.exists()){
-                    add_img.setImageBitmap(bitmap);
-                    FileOutputStream fos = null;
-                    fos = new FileOutputStream(file);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                    fos.flush();
-                    fos.close();
-                }
-                profile = file.getAbsolutePath();
-            }catch (Exception e){
+                getImagePath();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }else if(requestCode == 2 && resultCode == Activity.RESULT_OK){
-            photo = (Bitmap) data.getExtras().get(Constant.DATA);
-
-            try {
-                ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
-                File directory = contextWrapper.getDir(Constant.PHOTO_DIR, Context.MODE_PRIVATE);
-                File file = new File(directory, System.currentTimeMillis() + ".jpg");
-
-                if (!file.exists()){
-                    add_img.setImageBitmap(photo);
-                    FileOutputStream fos = null;
-                    fos = new FileOutputStream(file);
-                    photo.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                    fos.flush();
-                    fos.close();
-                }
-                profile = file.getAbsolutePath();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            bitmap = (Bitmap) data.getExtras().get(Constant.DATA);
+            getImagePath();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private void getImagePath(){
+        try {
+            ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+            File directory = contextWrapper.getDir(Constant.PHOTO_DIR, Context.MODE_PRIVATE);
+            File file = new File(directory, System.currentTimeMillis() + ".jpg");
+
+            if (!file.exists()){
+                add_img.setImageBitmap(bitmap);
+                FileOutputStream fos = null;
+                fos = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                fos.flush();
+                fos.close();
+            }
+            profile = file.getAbsolutePath();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void addContact(String addName, String addPhone){
         MyDatabase db = MyDatabase.getDBInstance(this.getApplicationContext());
+        contact = new Contact();
 
-        if (imageUri != null){
-            contact = new Contact();
+        if (bitmap != null){
             contact.zName = addName;
             contact.zPhone = addPhone;
             contact.datetime = getTime();
             contact.image = profile;
-        }else if (photo != null){
-            contact = new Contact();
-            contact.zName = addName;
-            contact.zPhone = addPhone;
-            contact.datetime = getTime();
-            contact.image = profile;
-        }else{
-            contact = new Contact();
+        } else{
             contact.zName = addName;
             contact.zPhone = addPhone;
             contact.datetime = getTime();
